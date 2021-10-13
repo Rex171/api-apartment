@@ -1,25 +1,40 @@
-import logo from './logo.svg';
+import React, {useEffect} from "react";
 import './App.css';
+import apartmentOne from './assets/apartment1.jpg';
+import apartmentTwo from './assets/apartment2.png';
+import apartmentThree from './assets/apartment13.jpg';
+import Apartment from "./Apartment/Apartment";
+import {connect, useDispatch} from "react-redux";
+import {GET_ENTITIES} from "./store/actions/getEntities";
+import axios from 'axios';
+import entities from '../entities.json';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App({getEntities}) {
+    const arrApartment = [{id: 1, img: apartmentOne}, {id: 2, img: apartmentTwo}, {id: 3, img: apartmentThree}];
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        axios.get('http://localhost:8080').then(() => {
+            dispatch({type: GET_ENTITIES, payload: entities})
+        }).catch(() => {
+            console.log('ОШИБКА')
+        })
+    }, [])
+
+    return (
+        <div className="App">
+            <div className='apartmentContainer'>
+                {getEntities?.response.map((item) => <Apartment key={item.id} entity={item}
+                                                                img={arrApartment.find((apartmentImg) => apartmentImg.id === item.id)}/>)}
+            </div>
+        </div>
+    );
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        getEntities: state.getEntities,
+    }
+}
+
+export default connect(mapStateToProps)(App);
