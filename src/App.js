@@ -16,9 +16,7 @@ function App({getEntities}) {
     useEffect(() => {
         axios.get('http://localhost:8080').then(() => {
             dispatch({type: GET_ENTITIES, payload: entities})
-        }).catch(() => {
-            console.log('ОШИБКА')
-        })
+        }).catch(error => alert(error))
     }, [])
 
     return (
